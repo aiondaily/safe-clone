@@ -22,12 +22,19 @@ RUN ARCH=$(dpkg --print-architecture) && \
 # ─── Python 掃描工具 ─────────────────────────────────────────────────────────
 RUN pip install --no-cache-dir bandit pip-audit
 
+# ─── 非 root 使用者（最小權限原則）────────────────────────────────────────────
+RUN useradd -r -u 1001 -s /sbin/nologin -d /home/scanner scanner && \
+    mkdir -p /home/scanner && \
+    chown scanner:scanner /home/scanner
+ENV TRIVY_CACHE_DIR=/home/scanner/.cache/trivy
+
 # ─── 工作目錄 ────────────────────────────────────────────────────────────────
 WORKDIR /workspace
 COPY repo_security_scan.sh /usr/local/bin/repo_security_scan.sh
-RUN chmod +x /usr/local/bin/repo_security_scan.sh
+RUN chmod +x /usr/local/bin/repo_security_scan.sh && \
+    mkdir -p /workspace/scan_reports && \
+    chown -R scanner:scanner /workspace
 
-# 報告輸出目錄
-RUN mkdir -p /workspace/scan_reports
+USER scanner
 
 ENTRYPOINT ["/usr/local/bin/repo_security_scan.sh"]

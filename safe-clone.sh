@@ -246,12 +246,17 @@ run_scan_in_docker() {
     echo ""
 
     # 安全限制：
+    #   --user 1001:1001 非 root 執行（符合 Dockerfile USER 設定）
     #   --cap-drop=ALL 移除所有特權
     #   --security-opt=no-new-privileges 防止提權
     #   --memory / --cpus 限制資源
     #   trivy-cache volume 持久化 Trivy DB（避免每次下載 ~88MB）
+    # 確保 container user (uid 1001) 可寫入 output 目錄
+    chmod a+w "$report_host_dir"
+
     local docker_opts=(
         --name "$container_name"
+        --user 1001:1001
         --cap-drop=ALL
         --cap-add=DAC_OVERRIDE
         --security-opt=no-new-privileges
@@ -261,7 +266,7 @@ run_scan_in_docker() {
         --tmpfs /tmp:rw,nosuid,size=1g
         --tmpfs /workspace:rw,nosuid,size=2g
         -v "${report_host_dir}:/output:rw"
-        -v "trivy-db-cache:/root/.cache/trivy"
+        -v "trivy-db-cache:/home/scanner/.cache/trivy"
         -e "REPORT_OUTPUT_DIR=/output"
     )
 

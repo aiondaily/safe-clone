@@ -321,7 +321,7 @@ run_trivy() {
             warn "Trivy: 漏洞=$total_vulns  Secrets=$total_secrets  設定錯誤=$total_misconfig"
             echo ""
             head -50 "$report_txt"
-            [[ $(wc -l < "$report_txt") -gt 50 ]] && info "...完整報告見 $report_txt"
+            if [[ $(wc -l < "$report_txt") -gt 50 ]]; then info "...完整報告見 $report_txt"; fi
         fi
     else
         warn "Trivy 報告解析失敗，請檢查原始 log"
