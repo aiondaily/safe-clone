@@ -1,0 +1,16 @@
+# Scan reports (generated output)
+scan_reports/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Environment
+.env
