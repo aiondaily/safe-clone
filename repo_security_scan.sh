@@ -336,7 +336,9 @@ run_bandit() {
     [[ -f "$SCAN_DIR/setup.py" ]]         && has_python=true
     [[ -f "$SCAN_DIR/pyproject.toml" ]]   && has_python=true
     [[ -f "$SCAN_DIR/Pipfile" ]]          && has_python=true
-    find "$SCAN_DIR" -maxdepth 3 -name "*.py" -not -path '*/.git/*' | head -1 | grep -q . && has_python=true
+    if find "$SCAN_DIR" -maxdepth 3 -name "*.py" -not -path '*/.git/*' -print -quit | grep -q .; then
+        has_python=true
+    fi
 
     if ! $has_python; then
         info "未偵測到 Python 專案，跳過 Bandit 掃描"

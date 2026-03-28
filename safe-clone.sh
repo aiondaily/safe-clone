@@ -253,12 +253,13 @@ run_scan_in_docker() {
     local docker_opts=(
         --name "$container_name"
         --cap-drop=ALL
+        --cap-add=DAC_OVERRIDE
         --security-opt=no-new-privileges
         --memory=2g
         --cpus=2
         --pids-limit=256
-        --tmpfs /tmp:rw,noexec,nosuid,size=1g
-        --tmpfs /workspace:rw,noexec,nosuid,size=2g
+        --tmpfs /tmp:rw,nosuid,size=1g
+        --tmpfs /workspace:rw,nosuid,size=2g
         -v "${report_host_dir}:/output:rw"
         -v "trivy-db-cache:/root/.cache/trivy"
         -e "REPORT_OUTPUT_DIR=/output"
