@@ -24,8 +24,8 @@ RUN pip install --no-cache-dir bandit pip-audit
 
 # ─── 非 root 使用者（最小權限原則）────────────────────────────────────────────
 RUN useradd -r -u 1001 -s /sbin/nologin -d /home/scanner scanner && \
-    mkdir -p /home/scanner && \
-    chown scanner:scanner /home/scanner
+    mkdir -p /home/scanner/.cache/trivy && \
+    chown -R scanner:scanner /home/scanner
 ENV TRIVY_CACHE_DIR=/home/scanner/.cache/trivy
 
 # ─── 工作目錄 ────────────────────────────────────────────────────────────────
